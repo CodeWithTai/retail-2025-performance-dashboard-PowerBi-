@@ -8,6 +8,24 @@ A four-page Power BI report analysing a year of retail sales, product margins, c
 
 The report covers **1,650 order lines (1,181 orders) placed between 1 January and 31 December 2025** across four sales channels, plus **52 weeks of online marketing funnel data**. Each page answers one business question and shares a common layout: a navigation rail with filters on the left, five KPI cards across the top, two charts in the middle and detail visuals at the bottom.
 
+## Screenshots
+
+**1. Executive Overview**
+
+![Executive Overview page: net sales, gross profit, margin and orders, monthly net sales with month-over-month change, channel share and a regional scorecard](screenshots/executive-overview.png)
+
+**2. Product & Margin Drivers**
+
+![Product & Margin Drivers page: discount and return KPIs, volume against margin by subcategory, discount versus return rate by category and a product scorecard](screenshots/product-margin-drivers.png)
+
+**3. Customer & Service Experience**
+
+![Customer & Service Experience page: buying customers, on-time rate and rating KPIs, rating by days late, on-time rate by delivery type and customer value by member tier and acquisition source](screenshots/customer-service-experience.png)
+
+**4. Marketing Funnel & Campaign Efficiency**
+
+![Marketing Funnel & Campaign Efficiency page: funnel visits, orders, conversion and ad spend KPIs, weekly visits and conversion, stage-to-stage rates by channel and a campaign efficiency table](screenshots/marketing-funnel.png)
+
 ## Business Questions
 
 | # | Page | Question it answers |
@@ -229,6 +247,7 @@ Where the MCP tools fell short, Claude Code edited the PBIR JSON files directly.
 │   │   └── pages/                         # One folder per page, one JSON file per visual (PBIR)
 │   └── StaticResources/
 │       └── RegisteredResources/           # Custom theme (Espresso Terracotta)
+├── screenshots/                           # Images of the four report pages shown above
 ├── .gitignore                             # Excludes Power BI's local cache and settings, .xlsx and .pbix files
 └── README.md
 ```
