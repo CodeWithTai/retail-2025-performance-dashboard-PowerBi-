@@ -1,0 +1,18 @@
+table Dim_Geography
+	lineageTag: ba3183dc-b912-4287-bb6f-ed05c62750c2
+
+	column City
+		dataType: string
+		isKey
+		lineageTag: 9bfad1fd-956b-438c-991c-710757f8bb0b
+		sourceColumn: City
+
+	column Region
+		dataType: string
+		lineageTag: c226dc47-9db1-43ae-b053-2b5434788a3e
+		sourceColumn: Region
+
+	partition Dim_Geography = m
+		mode: import
+		source = let Source = Excel.Workbook(File.Contents("C:\\AI-Agent-Team\\retail_sales_2025.xlsx"), null, true), SalesTable = Source{[Item="SalesTable",Kind="Table"]}[Data], Selected = Table.SelectColumns(SalesTable, {"City", "Region"}), ChangedType = Table.TransformColumnTypes(Selected, {{"City", type text}, {"Region", type text}}), Deduped = Table.Distinct(ChangedType) in Deduped
+

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "baa7484dd8f130be71a4",
+  "position": {
+    "x": 1052.328568792494,
+    "y": 70.930433918610092,
+    "z": 9000,
+    "height": 75.581609913273056,
+    "width": 212.79130175583029,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fact_Funnel"
+                    }
+                  },
+                  "Property": "Cost per Order (paid)"
+                }
+              },
+              "queryRef": "Fact_Funnel.Cost per Order (paid)",
+              "nativeQueryRef": "Cost per Order (paid)"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Cost per Order (paid)'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

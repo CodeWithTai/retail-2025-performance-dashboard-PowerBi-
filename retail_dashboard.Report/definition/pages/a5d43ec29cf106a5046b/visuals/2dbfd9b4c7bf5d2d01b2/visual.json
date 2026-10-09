@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "2dbfd9b4c7bf5d2d01b2",
+  "position": {
+    "x": 616.28081929284178,
+    "y": 70.930433918610092,
+    "z": 7000,
+    "height": 75.581609913273056,
+    "width": 212.79130175583029,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fact_Funnel"
+                    }
+                  },
+                  "Property": "Funnel Conversion %"
+                }
+              },
+              "queryRef": "Fact_Funnel.Funnel Conversion %",
+              "nativeQueryRef": "Funnel Conversion %"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Funnel Conversion %'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

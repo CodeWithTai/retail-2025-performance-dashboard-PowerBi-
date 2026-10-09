@@ -1,0 +1,9 @@
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Third-party design reference image (not redistributable)
+design-references/
+
+# Source data and compiled reports (not redistributed)
+*.xlsx
+*.pbix

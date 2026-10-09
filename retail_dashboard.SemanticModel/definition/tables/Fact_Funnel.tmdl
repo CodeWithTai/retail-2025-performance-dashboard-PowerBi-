@@ -1,0 +1,102 @@
+table Fact_Funnel
+	lineageTag: bf666acb-9ae9-49e9-b340-eaddbb907b5d
+
+	measure 'Funnel Visits' = SUM( Fact_Funnel[Visits] )
+		formatString: #,0
+		lineageTag: 51384b2c-845c-4934-92eb-234b94734424
+
+	measure 'Funnel Orders' = SUM( Fact_Funnel[Orders] )
+		formatString: #,0
+		lineageTag: 24093745-fd17-4ee5-9a46-e4403d8bf1ed
+
+	measure 'Funnel Conversion %' = DIVIDE( [Funnel Orders], [Funnel Visits] )
+		formatString: 0.00%
+		lineageTag: 5777d4a0-d190-4c97-92f4-d01b8e40df23
+
+	measure 'Paid Ad Spend' = CALCULATE( SUM( Fact_Funnel[Ad_Spend] ), Fact_Funnel[Ad_Spend] > 0 )
+		formatString: #,0
+		lineageTag: c74fd2ff-7719-4e4b-8c54-e5ef57f9ac67
+
+	measure 'Paid Orders' = CALCULATE( SUM( Fact_Funnel[Orders] ),   Fact_Funnel[Ad_Spend] > 0 )
+		formatString: #,0
+		lineageTag: e4a08b20-7293-4009-9feb-8dc7eb1955dc
+
+	measure 'Cost per Order (paid)' = DIVIDE( [Paid Ad Spend], [Paid Orders] )
+		formatString: #,0
+		lineageTag: b5ec9ff0-2ca8-4e7b-b4ad-f42b04580e9c
+
+	measure 'ATC Rate %' = DIVIDE( SUM( Fact_Funnel[Add_to_Cart] ), [Funnel Visits] )
+		formatString: 0.00%
+		lineageTag: 3e7891af-2f9a-4d16-b3d6-6c4b6b422471
+
+	measure 'Checkout Rate %' = DIVIDE( SUM( Fact_Funnel[Checkout] ), SUM( Fact_Funnel[Add_to_Cart] ) )
+		formatString: 0.00%
+		lineageTag: 128db41f-177f-4096-87e5-d21f0d0b73c4
+
+	measure 'Checkout-to-Order Rate %' = DIVIDE( [Funnel Orders], SUM( Fact_Funnel[Checkout] ) )
+		formatString: 0.00%
+		lineageTag: 5ab26ddc-7908-40b2-9adf-8b299a5bf6db
+
+	column Week_Start
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5b189afd-572a-45a3-ba77-0eb41e279fa5
+		summarizeBy: none
+		sourceColumn: Week_Start
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Channel
+		dataType: string
+		isHidden
+		lineageTag: 14d2fd63-d71d-4a56-8098-f8415c9e2c71
+		sourceColumn: Channel
+
+	column Campaign
+		dataType: string
+		isHidden
+		lineageTag: 037c1437-4656-4cdf-99cd-1c6daa1e03c7
+		sourceColumn: Campaign
+
+	column Visits
+		dataType: int64
+		lineageTag: 04f9be71-9256-4c4b-b891-31b16c5045cd
+		sourceColumn: Visits
+
+	column Add_to_Cart
+		dataType: int64
+		lineageTag: 0b7d4c1b-4852-4b1c-bb95-da6361d98ea8
+		sourceColumn: Add_to_Cart
+
+	column Checkout
+		dataType: int64
+		lineageTag: 1bbf8430-356e-401c-85f8-bbea291278df
+		sourceColumn: Checkout
+
+	column Orders
+		dataType: int64
+		lineageTag: 2bc7d069-c64d-419e-a0f7-d2f34f8181e6
+		sourceColumn: Orders
+
+	column Ad_Spend
+		dataType: double
+		lineageTag: 7c2aaff1-6fb6-4fd6-bbdd-659c58d5063a
+		summarizeBy: sum
+		sourceColumn: Ad_Spend
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Channel_Campaign_Key
+		dataType: string
+		isHidden
+		lineageTag: 64f8fa08-fb80-4c77-8355-f00714095ec4
+		sourceColumn: Channel_Campaign_Key
+
+	partition Fact_Funnel = m
+		mode: import
+		source = let Source = Excel.Workbook(File.Contents("C:\\AI-Agent-Team\\retail_sales_2025.xlsx"), null, true), MarketingFunnelTable = Source{[Item="MarketingFunnelTable",Kind="Table"]}[Data], RemovedRatios = Table.RemoveColumns(MarketingFunnelTable, {"ATC_Rate", "Checkout_Rate", "Conversion_Rate", "Cost_per_Order"}), ChangedType = Table.TransformColumnTypes(RemovedRatios, {{"Week_Start", type date}, {"Channel", type text}, {"Campaign", type text}, {"Visits", Int64.Type}, {"Add_to_Cart", Int64.Type}, {"Checkout", Int64.Type}, {"Orders", Int64.Type}, {"Ad_Spend", type number}}), AddKey = Table.AddColumn(ChangedType, "Channel_Campaign_Key", each [Channel] & "|" & [Campaign], type text) in AddKey
+

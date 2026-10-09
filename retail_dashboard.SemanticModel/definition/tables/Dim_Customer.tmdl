@@ -1,0 +1,88 @@
+table Dim_Customer
+	lineageTag: 25b85f32-2e34-4647-af9a-231090d551c1
+
+	column Customer_ID
+		dataType: string
+		isKey
+		lineageTag: d3051710-33be-44e2-a64a-14511326e642
+		summarizeBy: none
+		sourceColumn: Customer_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Join_Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 9c9c2f9e-e195-476a-8c3c-831b35b4fbc6
+		summarizeBy: none
+		sourceColumn: Join_Date
+
+		variation Variation
+			isDefault
+			relationship: dc3e2b86-c639-4cec-93e1-a1c038fce6df
+			defaultHierarchy: LocalDateTable_6a03640b-43ce-4306-ba3e-166d5d2d0555.'Date Hierarchy'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Age_Group
+		dataType: string
+		lineageTag: c2497a42-a3c4-4b84-a868-29531dc8e53f
+		summarizeBy: none
+		sourceColumn: Age_Group
+
+		annotation SummarizationSetBy = Automatic
+
+	column Gender
+		dataType: string
+		lineageTag: b101127a-8018-4ab6-ad94-c9435003796b
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 878cee32-9dac-4013-96a1-450e34ce25dd
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 03285e3e-f24d-4f5e-9446-30986495886d
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Member_Tier
+		dataType: string
+		lineageTag: b8b77462-ef46-4612-90e9-4fcccfc0cf93
+		summarizeBy: none
+		sourceColumn: Member_Tier
+
+		annotation SummarizationSetBy = Automatic
+
+	column Acquisition_Source
+		dataType: string
+		lineageTag: 9f227de7-1b3c-461e-b197-085d27abf7bc
+		summarizeBy: none
+		sourceColumn: Acquisition_Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column Preferred_Channel
+		dataType: string
+		lineageTag: 000d3adc-267f-4213-bbb1-7e5de2cecf22
+		summarizeBy: none
+		sourceColumn: Preferred_Channel
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Customer = m
+		mode: import
+		source = let Source = Excel.Workbook(File.Contents("C:\\AI-Agent-Team\\retail_sales_2025.xlsx"), null, true), CustomersTable = Source{[Item="CustomersTable",Kind="Table"]}[Data], ChangedType = Table.TransformColumnTypes(CustomersTable, {{"Customer_ID", type text}, {"Join_Date", type date}, {"Age_Group", type text}, {"Gender", type text}, {"City", type text}, {"Region", type text}, {"Member_Tier", type text}, {"Acquisition_Source", type text}, {"Preferred_Channel", type text}}), AddUnknown = Table.InsertRows(ChangedType, Table.RowCount(ChangedType), {[Customer_ID="Unknown", Join_Date=null, Age_Group="Unknown", Gender="Unknown", City="Unknown", Region="Unknown", Member_Tier="Unknown", Acquisition_Source="Unknown", Preferred_Channel="Unknown"]}) in AddUnknown
+

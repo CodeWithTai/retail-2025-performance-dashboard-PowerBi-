@@ -1,0 +1,48 @@
+relationship FactSales_DimDate
+	fromColumn: Fact_Sales.Order_Date
+	toColumn: Dim_Date.Date
+
+relationship FactFunnel_DimDate
+	fromColumn: Fact_Funnel.Week_Start
+	toColumn: Dim_Date.Date
+
+relationship FactSales_DimCustomer
+	fromColumn: Fact_Sales.Customer_ID
+	toColumn: Dim_Customer.Customer_ID
+
+relationship FactSales_DimProduct
+	fromColumn: Fact_Sales.Product_ID
+	toColumn: Dim_Product.Product_ID
+
+relationship FactSales_DimChannel
+	fromColumn: Fact_Sales.Channel_Campaign_Key
+	toColumn: Dim_Channel.Channel_Campaign_Key
+
+relationship FactFunnel_DimChannel
+	fromColumn: Fact_Funnel.Channel_Campaign_Key
+	toColumn: Dim_Channel.Channel_Campaign_Key
+
+relationship FactSales_DimGeography
+	fromColumn: Fact_Sales.City
+	toColumn: Dim_Geography.City
+
+relationship dc3e2b86-c639-4cec-93e1-a1c038fce6df
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Customer.Join_Date
+	toColumn: LocalDateTable_6a03640b-43ce-4306-ba3e-166d5d2d0555.Date
+
+relationship 735f4c91-e2dd-450a-ad5c-b10b63da6aad
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Product.Launch_Date
+	toColumn: LocalDateTable_a2e9b532-701c-427a-81cf-3f55ed30bb12.Date
+
+relationship 3a6e2027-4d26-4c09-b41d-f1499403e2c5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Fact_Sales.Promised_Date
+	toColumn: LocalDateTable_eebf5215-3299-489e-96f0-e205e65b9ff5.Date
+
+relationship 47e95d70-1b7c-4a36-a03f-838e85096349
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Fact_Sales.Delivered_Date
+	toColumn: LocalDateTable_a8e91236-5f24-4766-a261-37bdaea2edf0.Date
+

@@ -1,0 +1,150 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "f6c8afe24c82022f1ee3",
+  "position": {
+    "x": 180,
+    "y": 437,
+    "z": 12000,
+    "height": 277,
+    "width": 1085,
+    "tabOrder": 12000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Channel"
+                    }
+                  },
+                  "Property": "Channel"
+                }
+              },
+              "queryRef": "Dim_Channel.Channel",
+              "nativeQueryRef": "Channel",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Channel"
+                    }
+                  },
+                  "Property": "Campaign"
+                }
+              },
+              "queryRef": "Dim_Channel.Campaign",
+              "nativeQueryRef": "Campaign",
+              "active": false
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fact_Funnel"
+                    }
+                  },
+                  "Property": "Funnel Visits"
+                }
+              },
+              "queryRef": "Fact_Funnel.Funnel Visits",
+              "nativeQueryRef": "Funnel Visits"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fact_Funnel"
+                    }
+                  },
+                  "Property": "Funnel Orders"
+                }
+              },
+              "queryRef": "Fact_Funnel.Funnel Orders",
+              "nativeQueryRef": "Funnel Orders"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fact_Funnel"
+                    }
+                  },
+                  "Property": "Funnel Conversion %"
+                }
+              },
+              "queryRef": "Fact_Funnel.Funnel Conversion %",
+              "nativeQueryRef": "Funnel Conversion %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fact_Funnel"
+                    }
+                  },
+                  "Property": "Paid Ad Spend"
+                }
+              },
+              "queryRef": "Fact_Funnel.Paid Ad Spend",
+              "nativeQueryRef": "Paid Ad Spend"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fact_Funnel"
+                    }
+                  },
+                  "Property": "Cost per Order (paid)"
+                }
+              },
+              "queryRef": "Fact_Funnel.Cost per Order (paid)",
+              "nativeQueryRef": "Cost per Order (paid)"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Campaign Efficiency'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

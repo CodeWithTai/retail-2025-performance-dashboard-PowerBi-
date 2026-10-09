@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "9056466005c4733e403e",
+  "position": {
+    "x": 833.723297043335,
+    "y": 70.930433918610092,
+    "z": 8000,
+    "height": 75.581609913273056,
+    "width": 212.79130175583029,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fact_Funnel"
+                    }
+                  },
+                  "Property": "Paid Ad Spend"
+                }
+              },
+              "queryRef": "Fact_Funnel.Paid Ad Spend",
+              "nativeQueryRef": "Paid Ad Spend"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Paid Ad Spend'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

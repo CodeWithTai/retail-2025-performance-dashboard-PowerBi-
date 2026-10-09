@@ -1,0 +1,100 @@
+table Dim_Product
+	lineageTag: 4af7c902-5a8c-4157-9a58-82c4e9af1e43
+
+	column Product_ID
+		dataType: string
+		isKey
+		lineageTag: 0b032083-7ca6-42e6-ba6c-6dd05fa318bf
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Name
+		dataType: string
+		lineageTag: daf14718-880d-4155-8d79-117a040fbbac
+		summarizeBy: none
+		sourceColumn: Product_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: c598db34-3e3d-41fc-a820-ed7586443b31
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subcategory
+		dataType: string
+		lineageTag: 6daa12ad-d23a-4c20-96d9-bd9710b2df1a
+		summarizeBy: none
+		sourceColumn: Subcategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column Brand
+		dataType: string
+		lineageTag: 6bb6b3ba-efe5-4e2c-b5ef-86c577f523d3
+		summarizeBy: none
+		sourceColumn: Brand
+
+		annotation SummarizationSetBy = Automatic
+
+	column Supplier
+		dataType: string
+		lineageTag: f9d140cb-b537-4763-80c6-f8efe04e5163
+		summarizeBy: none
+		sourceColumn: Supplier
+
+		annotation SummarizationSetBy = Automatic
+
+	column Launch_Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 06fec2c9-de86-43ce-93cc-f57a5d4776cc
+		summarizeBy: none
+		sourceColumn: Launch_Date
+
+		variation Variation
+			isDefault
+			relationship: 735f4c91-e2dd-450a-ad5c-b10b63da6aad
+			defaultHierarchy: LocalDateTable_a2e9b532-701c-427a-81cf-3f55ed30bb12.'Date Hierarchy'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column List_Price
+		dataType: double
+		lineageTag: a6001a0e-2473-44f6-a22f-ca6359143bdc
+		summarizeBy: sum
+		sourceColumn: List_Price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Standard_Cost
+		dataType: double
+		lineageTag: 3b6efe1f-d0f5-426c-afdf-40bcd6906259
+		summarizeBy: sum
+		sourceColumn: Standard_Cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Product_Status
+		dataType: string
+		lineageTag: 97ee57c7-7fc4-45b0-85ed-37201ca95ab0
+		summarizeBy: none
+		sourceColumn: Product_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Product = m
+		mode: import
+		source = let Source = Excel.Workbook(File.Contents("C:\\AI-Agent-Team\\retail_sales_2025.xlsx"), null, true), ProductsTable = Source{[Item="ProductsTable",Kind="Table"]}[Data], ChangedType = Table.TransformColumnTypes(ProductsTable, {{"Product_ID", type text}, {"Product_Name", type text}, {"Category", type text}, {"Subcategory", type text}, {"Brand", type text}, {"Supplier", type text}, {"Launch_Date", type date}, {"List_Price", type number}, {"Standard_Cost", type number}, {"Product_Status", type text}}) in ChangedType
+

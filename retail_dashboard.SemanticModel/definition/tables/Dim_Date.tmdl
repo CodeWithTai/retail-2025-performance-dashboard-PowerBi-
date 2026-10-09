@@ -1,0 +1,42 @@
+table Dim_Date
+	lineageTag: 94e8dd32-805d-4c74-b443-d86c5e2d693a
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isUnique
+		isKey
+		formatString: Long Date
+		lineageTag: 2631bc88-1654-4fc9-9a5b-6b92ceb1afa3
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		lineageTag: f8ff1f7b-22de-4852-9826-bb55cad37d0d
+		sourceColumn: Year
+
+	column MonthNumber
+		dataType: int64
+		lineageTag: 20a7d70d-fe37-4f25-8ebe-5fde2fc8b859
+		sourceColumn: MonthNumber
+
+	column MonthName
+		dataType: string
+		lineageTag: 7736132f-77e9-426e-bb53-739d4dd2bd4c
+		sourceColumn: MonthName
+		sortByColumn: MonthNumber
+
+	column Quarter
+		dataType: string
+		lineageTag: bd8c46ec-6c55-4828-ab92-abab5759ae06
+		sourceColumn: Quarter
+
+	partition Dim_Date = m
+		mode: import
+		source = let StartDate = #date(2025,1,1), EndDate = #date(2025,12,31), NumberOfDates = Duration.Days(EndDate - StartDate) + 1, DateList = List.Dates(StartDate, NumberOfDates, #duration(1,0,0,0)), ToTable = Table.FromList(DateList, Splitter.SplitByNothing(), {"Date"}), ChangedType = Table.TransformColumnTypes(ToTable, {{"Date", type date}}), AddYear = Table.AddColumn(ChangedType, "Year", each Date.Year([Date]), Int64.Type), AddMonthNumber = Table.AddColumn(AddYear, "MonthNumber", each Date.Month([Date]), Int64.Type), AddMonthName = Table.AddColumn(AddMonthNumber, "MonthName", each Date.ToText([Date], [Format="MMMM", Culture="en-US"]), type text), AddQuarter = Table.AddColumn(AddMonthName, "Quarter", each "Q" & Text.From(Date.QuarterOfYear([Date])), type text) in AddQuarter
+

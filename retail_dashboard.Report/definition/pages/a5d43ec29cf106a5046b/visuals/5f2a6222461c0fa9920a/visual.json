@@ -1,0 +1,90 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "5f2a6222461c0fa9920a",
+  "position": {
+    "x": 195.3493917758442,
+    "y": 3.4883819959972175,
+    "z": 1500,
+    "height": 56.976905934621222,
+    "width": 1054.6541567898255,
+    "tabOrder": 1500
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Marketing Funnel & Campaign ",
+                    "textStyle": {
+                      "fontFamily": "Georgia",
+                      "fontSize": "22pt",
+                      "color": "#3b2820"
+                    }
+                  },
+                  {
+                    "value": "Efficiency",
+                    "textStyle": {
+                      "fontFamily": "Georgia",
+                      "fontStyle": "italic",
+                      "fontSize": "22pt",
+                      "color": "#d4654a"
+                    }
+                  },
+                  {
+                    "value": "     How well do online channels turn visits and ad spend into orders?",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "10pt",
+                      "color": "#8b7d76"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Decor - page title'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

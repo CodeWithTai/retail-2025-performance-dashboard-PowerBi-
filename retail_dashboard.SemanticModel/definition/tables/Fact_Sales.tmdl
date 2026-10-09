@@ -1,0 +1,401 @@
+table Fact_Sales
+	lineageTag: affcd953-7eaa-4ef2-838e-365d4786e082
+
+	measure 'Net Sales' = SUM( Fact_Sales[Net_Sales] )
+		formatString: #,0
+		lineageTag: c73ba679-30e9-4a5a-800f-ba2b5803933e
+
+	measure 'Last Data Date' = MAX( Fact_Sales[Order_Date] )
+		formatString: dd mmm yyyy
+		lineageTag: 20c55e4c-ba1b-4982-9391-4c3eb2c1bc17
+
+	measure 'Net Sales PM' = CALCULATE( [Net Sales], DATEADD( Dim_Date[Date], -1, MONTH ) )
+		formatString: #,0
+		lineageTag: af39fa30-e622-4c66-b8e5-c7090797ce1d
+
+	measure 'Net Sales MoM Δ' = IF( NOT ISBLANK( [Net Sales PM] ), [Net Sales] - [Net Sales PM] )
+		formatString: #,0
+		lineageTag: 225fb206-2d3d-4eeb-8f85-9441cdc8fd6a
+
+	measure 'Net Sales MoM %' = DIVIDE( [Net Sales MoM Δ], [Net Sales PM] )
+		formatString: 0.00%
+		lineageTag: 75251c90-0285-4a21-a09b-2772e966e9f6
+
+	measure 'True Discount Given' =
+			CALCULATE( SUMX( Fact_Sales, Fact_Sales[Gross_Sales] * Fact_Sales[Discount_Pct] ),
+			           Fact_Sales[Order_Status] = "Completed" )
+		formatString: #,0
+		lineageTag: d020befc-bbba-4129-8453-b625b716962a
+
+	measure 'Gross Sales (Completed)' = CALCULATE( SUM( Fact_Sales[Gross_Sales] ), Fact_Sales[Order_Status] = "Completed" )
+		formatString: #,0
+		lineageTag: e456001a-4ef8-464f-b4d3-63609d5d6adf
+
+	measure 'Discount Rate %' = DIVIDE( [True Discount Given], [Gross Sales (Completed)] )
+		formatString: 0.00%
+		lineageTag: 5db9dac7-53f7-46f7-82d7-0cb48b2ab97c
+
+	measure 'Gross Profit' =
+			CALCULATE( SUM( Fact_Sales[Gross_Profit] ),
+			           KEEPFILTERS( Fact_Sales[Order_Status] = "Completed" ) )
+		formatString: #,0
+		lineageTag: 496562ea-a63a-4ce6-96c2-4b74adf60617
+
+	measure 'Gross Margin %' = DIVIDE( [Gross Profit], [Net Sales] )
+		formatString: 0.00%
+		lineageTag: 66f80b64-981c-4bd1-a077-7fd6da1e5d7b
+
+	measure 'Units per Line' =
+			DIVIDE(
+			  CALCULATE( SUM( Fact_Sales[Quantity] ), Fact_Sales[Order_Status]="Completed" ),
+			  CALCULATE( COUNTROWS( Fact_Sales ),      Fact_Sales[Order_Status]="Completed" ) )
+		formatString: 0.00
+		lineageTag: 6549a655-ec86-41ec-96c0-8e34c69402ae
+
+	measure 'Buying Customers' =
+			CALCULATE( DISTINCTCOUNT( Fact_Sales[Customer_ID] ),
+			           Fact_Sales[Order_Status] = "Completed",
+			           Dim_Customer[Customer_ID] <> "Unknown" )
+		formatString: #,0
+		lineageTag: 03de6165-18bd-4b0e-8cae-0ed604e9101c
+
+	measure 'Net Sales (known cust)' = CALCULATE( [Net Sales], Dim_Customer[Customer_ID] <> "Unknown" )
+		formatString: #,0
+		lineageTag: cf9d2802-9ae8-4a1a-831c-a1ff94591481
+
+	measure 'Net per Buying Customer' = DIVIDE( [Net Sales (known cust)], [Buying Customers] )
+		formatString: #,0
+		lineageTag: 699772a1-24db-4802-aacb-90475db3cf46
+
+	measure 'Returned Lines' = CALCULATE( COUNTROWS( Fact_Sales ), Fact_Sales[Order_Status] = "Returned" )
+		formatString: #,0
+		lineageTag: 5a10fda0-7942-4574-874e-0460a1feea46
+
+	measure 'Return Rate %' = DIVIDE( [Returned Lines], COUNTROWS( Fact_Sales ) )
+		formatString: 0.00%
+		lineageTag: a7bd9454-f14c-4000-ac0a-bfa138f54eb7
+
+	measure 'Forgone Net Sales' =
+			CALCULATE( SUMX( Fact_Sales, Fact_Sales[Gross_Sales] * ( 1 - Fact_Sales[Discount_Pct] ) ),
+			           Fact_Sales[Order_Status] IN { "Returned", "Cancelled" } )
+		formatString: #,0
+		lineageTag: 6d8debf0-771e-4b2b-b006-ba3718eac580
+
+	measure 'Potential Net Sales' = [Net Sales] + [Forgone Net Sales]
+		formatString: #,0
+		lineageTag: 738a364a-5bf5-4f01-b911-5f6deb0b0708
+
+	measure 'Forgone % of Potential' = DIVIDE( [Forgone Net Sales], [Potential Net Sales] )
+		formatString: 0.00%
+		lineageTag: b3ddab48-20a7-4959-803d-a0ff86fa809e
+
+	measure 'Return Handling Cost' = CALCULATE( SUM( Fact_Sales[Gross_Profit] ), Fact_Sales[Order_Status] = "Returned" )
+		formatString: #,0
+		lineageTag: 468b053b-670e-4efd-8a93-c270bb04089c
+
+	measure 'Completed Orders' =
+			CALCULATE( DISTINCTCOUNT( Fact_Sales[Order_ID] ),
+			           Fact_Sales[Order_Status] = "Completed" )
+		formatString: #,0
+		lineageTag: d36e2eaf-821d-4c41-9cb2-f4e3f6c467d6
+
+	measure AOV = DIVIDE( [Net Sales], [Completed Orders] )
+		formatString: #,0
+		lineageTag: 38e2de66-9add-403a-ada2-f083626cc3ed
+
+	measure 'Net Sales Share %' =
+			DIVIDE( [Net Sales],
+			        CALCULATE( [Net Sales], REMOVEFILTERS( Dim_Channel ) ) )
+		formatString: 0.00%
+		lineageTag: deefe4af-55ec-4b3b-ba07-ba02cc29510f
+
+	measure 'Delivered Lines' =
+			CALCULATE( COUNTROWS( Fact_Sales ),
+			           KEEPFILTERS( Fact_Sales[Order_Status] <> "Cancelled" ),
+			           KEEPFILTERS( NOT ISBLANK( Fact_Sales[Days_Late] ) ) )
+		formatString: #,0
+		lineageTag: 11285a33-2cf4-4b19-8774-0cae310f5704
+
+	measure 'On-Time Rate %' =
+			DIVIDE( CALCULATE( [Delivered Lines], KEEPFILTERS( Fact_Sales[Days_Late] = 0 ) ),
+			        [Delivered Lines] )
+		formatString: 0.00%
+		lineageTag: 0df572ae-27b9-4c45-8167-925e8da1c9bb
+
+	measure 'Rated Lines' = COUNT( Fact_Sales[Customer_Rating] )
+		formatString: #,0
+		lineageTag: 3767f93f-6191-43ae-8ec7-2c53ebf2b380
+
+	measure 'Avg Rating' = AVERAGE( Fact_Sales[Customer_Rating] )
+		formatString: 0.00
+		lineageTag: 207a2ecc-d2d5-4812-abd1-69fb3699cb2c
+
+	measure 'Avg Rating (Completed)' = CALCULATE( [Avg Rating], KEEPFILTERS( Fact_Sales[Order_Status] = "Completed" ) )
+		formatString: 0.00
+		lineageTag: 1b0de0bc-a285-4a7d-8721-42e7ffbff8fd
+
+	measure 'Rated Lines (Completed)' =
+			CALCULATE( COUNT( Fact_Sales[Customer_Rating] ),
+			           KEEPFILTERS( Fact_Sales[Order_Status] = "Completed" ) )
+		formatString: #,0
+		lineageTag: c8fd62d6-f280-439e-ba64-990b2b91590f
+
+	measure 'Completed Lines' = CALCULATE( COUNTROWS( Fact_Sales ), KEEPFILTERS( Fact_Sales[Order_Status] = "Completed" ) )
+		formatString: #,0
+		lineageTag: bcd655d2-f026-43c9-8bd8-e9a1336afe29
+
+	measure 'Rating Response Rate % (Completed)' = DIVIDE( [Rated Lines (Completed)], [Completed Lines] )
+		formatString: 0.00%
+		lineageTag: c865ca16-c246-4b0b-9226-5b9a7610d1ee
+
+	measure 'Rating Response Rate %' = DIVIDE( [Rated Lines], COUNTROWS( Fact_Sales ) )
+		formatString: 0.00%
+		lineageTag: 9928477c-b8e7-4303-99c8-855210d77b48
+
+	column Transaction_ID
+		dataType: string
+		isKey
+		lineageTag: 0909bbde-7377-429f-9bc7-5ec2ec89db50
+		summarizeBy: none
+		sourceColumn: Transaction_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Order_ID
+		dataType: string
+		lineageTag: 393fa580-e7b5-47b3-a375-c94cebf15208
+		summarizeBy: none
+		sourceColumn: Order_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Order_Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 4ea2a553-c0a3-4e85-9452-60f8bb8a4732
+		summarizeBy: none
+		sourceColumn: Order_Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sales_Channel
+		dataType: string
+		isHidden
+		lineageTag: 4a92efcc-10af-4776-a598-896a9913495e
+		summarizeBy: none
+		sourceColumn: Sales_Channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column Campaign
+		dataType: string
+		isHidden
+		lineageTag: 30df9259-6d22-4d5a-b568-232ebfdbb59e
+		summarizeBy: none
+		sourceColumn: Campaign
+
+		annotation SummarizationSetBy = Automatic
+
+	column Store_or_Fulfillment
+		dataType: string
+		lineageTag: 31de5813-8433-4e91-95e2-a1d5dc8cb094
+		summarizeBy: none
+		sourceColumn: Store_or_Fulfillment
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 2a16bdf0-79dd-4f0e-98ce-f72765d57340
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 2f7bcdf3-880e-4bfd-bb81-f90b5507e164
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_ID
+		dataType: string
+		lineageTag: 3b5f0c9e-1639-4f05-93a9-131c67ae3a87
+		summarizeBy: none
+		sourceColumn: Customer_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_ID
+		dataType: string
+		lineageTag: 2fe1246a-f943-47f8-9056-49360e794619
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: int64
+		lineageTag: fcf29bde-c866-43a8-9398-e8eeb600fc40
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unit_Price
+		dataType: double
+		lineageTag: c977c10e-c403-4219-9975-d19a3d0b284e
+		summarizeBy: sum
+		sourceColumn: Unit_Price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Discount_Pct
+		dataType: double
+		lineageTag: adbf8d24-6f23-4110-ba69-bf4cde169fe7
+		summarizeBy: sum
+		sourceColumn: Discount_Pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Unit_Cost
+		dataType: double
+		lineageTag: 40510c82-0ac6-496d-81e4-7520c20ba991
+		summarizeBy: sum
+		sourceColumn: Unit_Cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Gross_Sales
+		dataType: double
+		lineageTag: efbdd29c-5460-4efc-816b-fba81dd770ed
+		summarizeBy: sum
+		sourceColumn: Gross_Sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Net_Sales
+		dataType: double
+		lineageTag: e5156c48-3754-4114-af61-b1c8048cccc4
+		summarizeBy: sum
+		sourceColumn: Net_Sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Gross_Profit
+		dataType: double
+		lineageTag: c4c551ed-df8b-41b4-8e3c-16f7b85c4fb8
+		summarizeBy: sum
+		sourceColumn: Gross_Profit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Order_Status
+		dataType: string
+		lineageTag: ec4f1c4b-0f57-46ef-a901-20fb46b4f8d4
+		summarizeBy: none
+		sourceColumn: Order_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Payment_Method
+		dataType: string
+		lineageTag: c0449ceb-1250-4a83-85a8-a727ab97cf71
+		summarizeBy: none
+		sourceColumn: Payment_Method
+
+		annotation SummarizationSetBy = Automatic
+
+	column Promo_Code
+		dataType: string
+		lineageTag: 22216f30-0cf9-41f0-be2f-5546b3ae4661
+		summarizeBy: none
+		sourceColumn: Promo_Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Delivery_Type
+		dataType: string
+		lineageTag: 07d06de7-4862-4029-b4dd-a01230752e28
+		summarizeBy: none
+		sourceColumn: Delivery_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Promised_Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 3bb16cb4-4c92-4e9f-ada9-8499d1a75bc4
+		summarizeBy: none
+		sourceColumn: Promised_Date
+
+		variation Variation
+			isDefault
+			relationship: 3a6e2027-4d26-4c09-b41d-f1499403e2c5
+			defaultHierarchy: LocalDateTable_eebf5215-3299-489e-96f0-e205e65b9ff5.'Date Hierarchy'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Delivered_Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: cc07d77e-af0c-4f08-880f-72e065fc55f9
+		summarizeBy: none
+		sourceColumn: Delivered_Date
+
+		variation Variation
+			isDefault
+			relationship: 47e95d70-1b7c-4a36-a03f-838e85096349
+			defaultHierarchy: LocalDateTable_a8e91236-5f24-4766-a261-37bdaea2edf0.'Date Hierarchy'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Days_Late
+		dataType: int64
+		lineageTag: 5d267b73-381f-4e08-8f9e-078ef5daa332
+		summarizeBy: sum
+		sourceColumn: Days_Late
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_Rating
+		dataType: int64
+		lineageTag: 60934e45-d7ad-4a45-931c-970a86c1987f
+		summarizeBy: sum
+		sourceColumn: Customer_Rating
+
+		annotation SummarizationSetBy = Automatic
+
+	column Channel_Campaign_Key
+		dataType: string
+		isHidden
+		lineageTag: d9adfe98-cd2d-4f74-a4c3-bda39457cac1
+		summarizeBy: none
+		sourceColumn: Channel_Campaign_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Sales = m
+		mode: import
+		source = let Source = Excel.Workbook(File.Contents("C:\\AI-Agent-Team\\retail_sales_2025.xlsx"), null, true), SalesTable = Source{[Item="SalesTable",Kind="Table"]}[Data], RemovedMargin = Table.RemoveColumns(SalesTable, {"Profit_Margin"}), FixCustNull = Table.ReplaceValue(RemovedMargin, null, "Unknown", Replacer.ReplaceValue, {"Customer_ID"}), FixCustBlank = Table.ReplaceValue(FixCustNull, "", "Unknown", Replacer.ReplaceValue, {"Customer_ID"}), FixPromoNull = Table.ReplaceValue(FixCustBlank, null, "No promo", Replacer.ReplaceValue, {"Promo_Code"}), FixPromoBlank = Table.ReplaceValue(FixPromoNull, "", "No promo", Replacer.ReplaceValue, {"Promo_Code"}), FixDeliveryDaysBlank = Table.ReplaceValue(FixPromoBlank, "", null, Replacer.ReplaceValue, {"Delivery_Days"}), ChangedType = Table.TransformColumnTypes(FixDeliveryDaysBlank, {{"Transaction_ID", type text}, {"Order_ID", type text}, {"Order_Date", type date}, {"Sales_Channel", type text}, {"Campaign", type text}, {"Store_or_Fulfillment", type text}, {"City", type text}, {"Region", type text}, {"Customer_ID", type text}, {"Product_ID", type text}, {"Quantity", Int64.Type}, {"Unit_Price", type number}, {"Discount_Pct", type number}, {"Unit_Cost", type number}, {"Gross_Sales", type number}, {"Net_Sales", type number}, {"Gross_Profit", type number}, {"Order_Status", type text}, {"Payment_Method", type text}, {"Promo_Code", type text}, {"Delivery_Type", type text}, {"Promised_Date", type date}, {"Delivered_Date", type date}, {"Delivery_Days", Int64.Type}, {"Customer_Rating", Int64.Type}}), RenamedDaysLate = Table.RenameColumns(ChangedType, {{"Delivery_Days", "Days_Late"}}), AddKey = Table.AddColumn(RenamedDaysLate, "Channel_Campaign_Key", each [Sales_Channel] & "|" & [Campaign], type text) in AddKey
+
